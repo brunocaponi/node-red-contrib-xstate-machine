@@ -12,7 +12,8 @@ function sanitizeStateId(state) {
 }
 
 function getStateId(state, type) {
-    return "\"" + sanitizeStateId(state.id) + typeSep + (type === undefined ? state.type : type) + "\"";
+    const stateType = (type === undefined ? state.type : type);
+    return "\"" + sanitizeStateId(state.id) + typeSep + stateType + (stateType === 'final' ? finalNodeSuffix : '') + "\"";
 }
 
 function getStateAction(actionTrigger) {
@@ -98,7 +99,7 @@ function createChildrenStates(parentState,level) {
 
         // Add additional final state in the diagram for "the" final state
         if( stateObj.type === "final" ) {
-            statesDef.push(getStateId(stateObj) + finalNodeSuffix + ' [label="" type=final]');
+            statesDef.push(getStateId(stateObj) + ' [label="" type=final]');
         }
     }
 
@@ -164,7 +165,7 @@ function createTransitions(parentState) {
 
     // If this state is a final state, create another "always" transition from this target state to the real final state node
     if( parentState.type === "final" )
-        transitionsDef.push( getStateId(parentState) + " => " + getStateId(parentState) + finalNodeSuffix );
+        transitionsDef.push( getStateId(parentState) + " => " + getStateId(parentState));
 
     for( let transition of parentState.transitions ) {
         let transitionDefs = [];
